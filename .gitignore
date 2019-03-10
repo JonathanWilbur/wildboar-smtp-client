@@ -1,5 +1,7 @@
 # Sourced from https://github.com/github/gitignore
 
+rubbish/
+
 # NodeJS
 logs
 *.log
