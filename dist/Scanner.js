@@ -48,7 +48,7 @@ class Scanner {
         }
         const ret = {
             code: this.bufferedLines[0].code,
-            message: Buffer.concat(this.bufferedLines.map((line) => line.line)),
+            lines: this.bufferedLines.map((line) => line.line),
         };
         this.bufferedLines = [];
         return ret;

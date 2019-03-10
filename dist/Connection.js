@@ -7,59 +7,30 @@ class Connection {
         this.scanner = new Scanner_1.Scanner(this.socket);
     }
     writeCommand(command, args) {
+        this.socket.removeAllListeners("data");
         if (args)
             this.socket.write(`${command} ${args}\r\n`);
         else
             this.socket.write(`${command}\r\n`);
     }
-    helo(domain) {
+    writeData(message) {
         this.socket.removeAllListeners("data");
-        this.writeCommand("HELO", domain);
+        this.socket.write(`${message}\r\n.\r\n`);
+    }
+    readResponse() {
         return new Promise((resolve, reject) => {
             this.socket.on("data", (data) => {
                 this.scanner.enqueueData(data);
                 const response = this.scanner.scanResponse();
-                if (response) {
+                if (response)
                     resolve(response);
-                }
-                else {
+                else
                     reject();
-                }
             });
         });
     }
-    ehlo(domainOrAddressLiteral) {
-        this.writeCommand(`EHLO ${domainOrAddressLiteral}`);
-    }
-    mail(fromAddress) {
-        this.writeCommand(`MAIL FROM:<${fromAddress}>`);
-    }
-    rcpt(toAddress) {
-        this.writeCommand(`RCPT TO:<${toAddress}>`);
-    }
-    rset() {
-        this.writeCommand("RSET");
-    }
-    vrfy(identifier) {
-        this.writeCommand(`VRFY ${identifier}`);
-    }
-    expn(identifier) {
-        this.writeCommand(`EXPN ${identifier}`);
-    }
-    help(topic) {
-        if (topic)
-            this.writeCommand(`HELP ${topic}`);
-        else
-            this.writeCommand("HELP");
-    }
-    noop(argument) {
-        if (argument)
-            this.writeCommand(`HELP ${argument}`);
-        else
-            this.writeCommand("HELP");
-    }
-    quit() {
-        this.writeCommand("QUIT");
+    disconnect() {
+        this.socket.end();
     }
 }
 exports.Connection = Connection;

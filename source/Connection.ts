@@ -9,15 +9,18 @@ class Connection {
 
     constructor (readonly socket : net.Socket) {}
 
-    private writeCommand (command : string, args? : string) : void {
+    public writeCommand (command : string, args? : string) : void {
+        this.socket.removeAllListeners("data");
         if (args) this.socket.write(`${command} ${args}\r\n`);
         else this.socket.write(`${command}\r\n`);
     }
 
-    public helo (domain : string) : Promise<Response> {
-        // TODO: Throw error if domain is ""
+    public writeData (message : string) : void {
         this.socket.removeAllListeners("data");
-        this.writeCommand("HELO", domain);
+        this.socket.write(`${message}\r\n.\r\n`);
+    }
+
+    public readResponse () : Promise<Response> {
         return new Promise<Response>((resolve, reject) => {
             this.socket.on("data", (data : Buffer) : void => {
                 this.scanner.enqueueData(data);
@@ -28,47 +31,8 @@ class Connection {
         });
     }
 
-    public ehlo (domainOrAddressLiteral : string) : void {
-        this.writeCommand(`EHLO ${domainOrAddressLiteral}`);
-    }
-
-    public mail (fromAddress : string) : void {
-        this.writeCommand(`MAIL FROM:<${fromAddress}>`);
-    }
-
-    public rcpt (toAddress : string) : void {
-        this.writeCommand(`RCPT TO:<${toAddress}>`);
-    }
-
-    // public data (message : string) : void {
-    //     this.writeCommand("DATA");
-    //     // TODO: Wait for the response, then actually write the data.
-    // }
-
-    public rset () : void {
-        this.writeCommand("RSET");
-    }
-
-    public vrfy (identifier : string) : void {
-        this.writeCommand(`VRFY ${identifier}`);
-    }
-
-    public expn (identifier : string) : void {
-        this.writeCommand(`EXPN ${identifier}`);
-    }
-
-    public help (topic? : string) : void {
-        if (topic) this.writeCommand(`HELP ${topic}`);
-        else this.writeCommand("HELP");
-    }
-
-    public noop (argument : string) : void {
-        if (argument) this.writeCommand(`HELP ${argument}`);
-        else this.writeCommand("HELP");
-    }
-
-    public quit () : void {
-        this.writeCommand("QUIT");
+    public disconnect () : void {
+        this.socket.end();
     }
 
 }
