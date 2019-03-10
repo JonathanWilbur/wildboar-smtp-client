@@ -1,0 +1,17 @@
+{
+  "name": "smtp-client",
+  "version": "1.0.0",
+  "description": "* Author: [Jonathan M. Wilbur](https://jonathan.wilbur.space) <[jonathan@wilbur.space](mailto:jonathan@wilbur.space)>\r * Copyright Year: 2019\r * License: [MIT License](https://mit-license.org/)\r * Version: _See `version` file or git tags._",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan M. Wilbur <jonathan@wilbur.space>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.12.21"
+  },
+  "dependencies": {
+    "buffer-split": "^1.0.0"
+  }
+}
